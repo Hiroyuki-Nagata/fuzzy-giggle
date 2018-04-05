@@ -1,0 +1,5 @@
+app:
+  ruby-version: "2.4.0"
+  git-url: "https://github.com/Hiroyuki-Nagata/fuzzy-giggle"
+  app-name: "fuzzy-giggle"
+  conf-name: "fuzzy-giggle.conf"
