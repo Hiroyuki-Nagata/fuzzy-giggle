@@ -1,15 +1,13 @@
-require 'yaml'
-
 Vagrant.configure("2") do |config|
   config.vm.box = "mvbcoding/awslinux"
   config.vm.box_version = "2017.03.0.20170401"
   config.vm.network "forwarded_port", guest: 80, host: 80
 
   # import settings
-  $settings = YAML.load_file 'vagrant-conf/config.yaml'
+  settings = YAML.load_file 'vagrant-conf/config.yaml'
 
   # reverse proxy
-  config.vm.provision "file", source: $settings['app']['conf-name'], destination: "/home/vagrant/#{settings['app']['conf-name']}"
+  config.vm.provision "file", source: settings['app']['conf-name'], destination: "/home/vagrant/#{settings['app']['conf-name']}"
 
   # deploy codes
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
@@ -37,15 +35,15 @@ Vagrant.configure("2") do |config|
     export PATH="$HOME/.rbenv/bin:$PATH"
     eval "$(rbenv init -)"
 
-    rbenv install -s #{$settings['app']['ruby-version']}
+    rbenv install -s #{settings['app']['ruby-version']}
     rbenv rehash
-    rbenv global #{$settings['app']['ruby-version']}
+    rbenv global #{settings['app']['ruby-version']}
 
-    # checkout $settings['app']['app-name']
+    # checkout settings['app']['app-name']
     gem install bundler
 
-    CLONE_TO=/home/vagrant/#{$settings['app']['app-name']}
-    REPO_URL=#{$settings['app']['git-url']}
+    CLONE_TO=/home/vagrant/#{settings['app']['app-name']}
+    REPO_URL=#{settings['app']['git-url']}
     BRANCH=master
 
     if [ -d "$CLONE_TO" ]; then
@@ -62,7 +60,7 @@ Vagrant.configure("2") do |config|
       git clone $REPO_URL $CLONE_TO
     fi
 
-    # update $settings['app']['app-name'] (hanami side)
+    # update settings['app']['app-name'] (hanami side)
     ruby --version
     cd $CLONE_TO && bundle install
 
@@ -82,10 +80,10 @@ Vagrant.configure("2") do |config|
     sudo npm install yarn -g
     sudo npm install webpack -g
     sudo npm install webpack-cli -g
-    cd $CLONE_TO/apps/datasource && yarn && yarn run webpack
+    #cd $CLONE_TO/apps/datasource && yarn && yarn run webpack
 
     # reverse proxy
-    sudo mv -f /home/vagrant/#{$settings['app']['conf-name']} /etc/httpd/conf.d/#{$settings['app']['conf-name']}
+    sudo mv -f /home/vagrant/#{settings['app']['conf-name']} /etc/httpd/conf.d/#{settings['app']['conf-name']}
     sudo yum -y install httpd
     sudo service httpd restart
     cd $CLONE_TO && bundle exec hanami s &

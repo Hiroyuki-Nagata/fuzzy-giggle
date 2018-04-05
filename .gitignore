@@ -3,3 +3,6 @@
 /public/assets*
 /tmp
 .env.*
+
+# vagrant
+.vagrant
