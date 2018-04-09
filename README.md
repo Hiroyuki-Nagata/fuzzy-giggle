@@ -1,33 +1,33 @@
 # Fuzzy Giggle
 
-Welcome to your new Hanami project!
+Excel情報をDBに入れるためのタスクを自動化する
 
-## Setup
+## 設置方法など
 
-How to run tests:
+Windowsの場合Vagrantを使うほうが早いです
 
-```
-% bundle exec rake
-```
+### Windows
 
-How to run the development console:
+* vagrantをインストールしておいてください
 
 ```
-% bundle exec hanami console
+// VMを更新してSSHでログイン
+$ vagrant up
+$ vagrant ssh
+
+// ApacheとHanamiを起動してやる
+$ sudo service httpd restart
+$ cd ~/fuzzy-giggle
+$ bundle exec hanami s
 ```
 
-How to run the development server:
+### Linux/Mac
+
+* rbenvを入れておいたほうがいいでしょう
 
 ```
-% bundle exec hanami server
-```
-
-How to prepare (create and migrate) DB for `development` and `test` environments:
-
-```
-% bundle exec hanami db prepare
-
-% HANAMI_ENV=test bundle exec hanami db prepare
+$ bundle install
+$ bundle exec hanami s
 ```
 
 Explore Hanami [guides](http://hanamirb.org/guides/), [API docs](http://docs.hanamirb.org/1.1.1/), or jump in [chat](http://chat.hanamirb.org) for help. Enjoy! 🌸
