@@ -1,0 +1,9 @@
+{
+  "name": "fuzzy-giggle",
+  "version": "1.0.0",
+  "description": "To automate database management",
+  "main": "application.js",
+  "repository": "git@github.com:Hiroyuki-Nagata/fuzzy-giggle.git",
+  "author": "Hiroyuki Nagata <idiotpanzer@gmail.com>",
+  "license": "MIT"
+}

@@ -86,6 +86,6 @@ Vagrant.configure("2") do |config|
     sudo mv -f /home/vagrant/#{settings['app']['conf-name']} /etc/httpd/conf.d/#{settings['app']['conf-name']}
     sudo yum -y install httpd
     sudo service httpd restart
-    cd $CLONE_TO && bundle exec hanami s &
+    #cd $CLONE_TO && bundle exec hanami s &
 SHELL
 end
