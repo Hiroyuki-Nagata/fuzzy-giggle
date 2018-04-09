@@ -5,5 +5,16 @@
   "main": "application.js",
   "repository": "git@github.com:Hiroyuki-Nagata/fuzzy-giggle.git",
   "author": "Hiroyuki Nagata <idiotpanzer@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "assets-webpack-plugin": "^3.5.1",
+    "bootstrap-vue": "^2.0.0-rc.6",
+    "vue": "^2.5.16",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
+  },
+  "dependencies": {
+    "css-loader": "^0.28.11",
+    "style-loader": "^0.20.3"
+  }
 }

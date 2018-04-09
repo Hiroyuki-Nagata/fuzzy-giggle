@@ -1,8 +1,14 @@
 # hanami
 /db/*.sqlite
 /public/assets*
+/public/*.js
 /tmp
 .env.*
+*.log
 
 # vagrant
 .vagrant
+
+# nodejs
+node_modules
+yarn.lock
