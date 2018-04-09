@@ -1,3 +1,6 @@
+require 'slim'
+require 'hanami/view'
+
 module Ds::Views::Home
   class Index
     include Ds::View
@@ -6,7 +9,6 @@ module Ds::Views::Home
       path = Hanami.root.join('webpack-assets.json')
       file = File.read(path)
       json = JSON.parse(file)
-      p json
       json[bundle]['js']
     end
   end

@@ -1,3 +1,6 @@
+require 'slim'
+require 'hanami/view'
+
 module Ds
   module Views
     class ApplicationLayout

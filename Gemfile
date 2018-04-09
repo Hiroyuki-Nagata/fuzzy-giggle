@@ -8,6 +8,7 @@ gem 'hanami-model', '~> 1.1'
 
 gem 'sqlite3'
 gem 'sequel'
+gem 'slim'
 
 group :development do
   # Code reloading
