@@ -1,7 +1,6 @@
 # hanami
 /db/*.sqlite
-/public/assets*
-/public/*.js
+/public/*
 /tmp
 .env.*
 *.log
@@ -12,3 +11,4 @@
 # nodejs
 node_modules
 yarn.lock
+webpack-assets.json

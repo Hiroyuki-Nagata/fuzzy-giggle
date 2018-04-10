@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
 
     CLONE_TO=/home/vagrant/#{settings['app']['app-name']}
     REPO_URL=#{settings['app']['git-url']}
-    BRANCH=master
+    BRANCH=#{settings['app']['branch']}
 
     if [ -d "$CLONE_TO" ]; then
       cd $CLONE_TO
@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
     sudo npm install yarn -g
     sudo npm install webpack -g
     sudo npm install webpack-cli -g
-    #cd $CLONE_TO/apps/datasource && yarn && yarn run webpack
+    cd $CLONE_TO && yarn
 
     # reverse proxy
     sudo mv -f /home/vagrant/#{settings['app']['conf-name']} /etc/httpd/conf.d/#{settings['app']['conf-name']}
