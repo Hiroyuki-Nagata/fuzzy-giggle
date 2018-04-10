@@ -11,6 +11,6 @@
     "webpack-cli": "^2.0.14"
   },
   "scripts": {
-    "postinstall": "cd ./apps/ds/vue-paper-dashboard && yarn"
+    "postinstall": "cd ./apps/ds/vue-paper-dashboard && yarn && yarn run webpack --config build/webpack.dev.conf.js"
   }
 }

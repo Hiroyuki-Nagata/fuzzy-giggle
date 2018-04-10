@@ -1,7 +1,6 @@
 # hanami
 /db/*.sqlite
-/public/assets*
-/public/*.js
+/public/*
 /tmp
 .env.*
 *.log
