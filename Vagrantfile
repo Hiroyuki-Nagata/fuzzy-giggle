@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
 
     CLONE_TO=/home/vagrant/#{settings['app']['app-name']}
     REPO_URL=#{settings['app']['git-url']}
-    BRANCH=feature/dashboard
+    BRANCH=#{settings['app']['branch']}
 
     if [ -d "$CLONE_TO" ]; then
       cd $CLONE_TO
