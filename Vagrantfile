@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
     sudo npm install yarn -g
     sudo npm install webpack -g
     sudo npm install webpack-cli -g
-    cd $CLONE_TO && yarn && yarn run webpack
+    cd $CLONE_TO && yarn
 
     # reverse proxy
     sudo mv -f /home/vagrant/#{settings['app']['conf-name']} /etc/httpd/conf.d/#{settings['app']['conf-name']}
