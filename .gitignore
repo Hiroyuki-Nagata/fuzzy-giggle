@@ -11,3 +11,4 @@
 # nodejs
 node_modules
 yarn.lock
+webpack-assets.json
