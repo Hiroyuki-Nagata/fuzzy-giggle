@@ -4,6 +4,7 @@ var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
 var webpack = require('webpack')
 var assetsPlugin = require('assets-webpack-plugin');
+var copyWebpackPlugin = require('copy-webpack-plugin');
 
 function resolve (dir) {
     return path.join(__dirname, '..', dir)
@@ -20,7 +21,12 @@ var webpackConfig = {
 	    ? config.build.assetsPublicPath
 	    : config.dev.assetsPublicPath
     },
-    plugins: [new assetsPlugin()],
+    plugins: [
+	new assetsPlugin(),
+	new copyWebpackPlugin([
+	    { from: 'static/**/*', to: '.'}
+	])
+    ],
     /* plugins: [
        new webpack.ProvidePlugin({
        $: "jquery",
