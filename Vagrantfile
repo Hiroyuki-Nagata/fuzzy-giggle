@@ -2,6 +2,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "mvbcoding/awslinux"
   config.vm.box_version = "2017.03.0.20170401"
   config.vm.network "forwarded_port", guest: 80, host: 80
+  config.vm.network "forwarded_port", guest: 3306, host: 3306
 
   # import settings
   settings = YAML.load_file 'vagrant-conf/config.yaml'
@@ -15,7 +16,21 @@ Vagrant.configure("2") do |config|
     echo $HOME  #=> /home/vagrant
     # install packages
     sudo yum -y update
-    sudo yum -y install git openssl-devel readline-devel zlib-devel sqlite-devel httpd
+    sudo yum -y install git openssl-devel readline-devel zlib-devel httpd
+
+    # install mysql57
+    sudo rpm -q mysql-community-server
+
+    if [ $? -eq 1 ]; then
+       echo "Install MySQL 5.7 !"
+       sudo yum install -y http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+       sudo yum install -y mysql-community-server
+       sudo service mysqld start
+       sudo chkconfig mysqld on
+    else
+       echo "Already installed MySQL 5.7"
+       sudo service mysqld restart
+    fi
 
     # prepare rbenv
     if hash rbenv 2>/dev/null; then
