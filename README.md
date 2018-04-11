@@ -6,7 +6,7 @@ Excel情報をDBに入れるためのタスクを自動化する
 
 Windowsの場合Vagrantを使うほうが早いです
 
-## dotenv
+### 共通
 
 * プロジェクト直下にdotenvファイルを置きます
 
@@ -45,5 +45,14 @@ $ bundle exec hanami s
 $ bundle install
 $ bundle exec hanami s
 ```
+
+## Heroku
+
+* MySQLのデータベースを設定
+
+```
+$ heroku addons:create cleardb:ignite --app <your-app-id>
+```
+
 
 Explore Hanami [guides](http://hanamirb.org/guides/), [API docs](http://docs.hanamirb.org/1.1.1/), or jump in [chat](http://chat.hanamirb.org) for help. Enjoy! 🌸
