@@ -9,9 +9,19 @@ Vagrant.configure("2") do |config|
 
   # reverse proxy
   config.vm.provision "file", source: settings['app']['conf-name'], destination: "/home/vagrant/#{settings['app']['conf-name']}"
-
+  # MySQL automation
+  config.vm.provision "file", source: "vagrant-conf/secure-mysql.sh", destination: "/home/vagrant/secure-mysql.sh"
   # deploy codes
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
+
+    # Author: Bert Van Vreckem <bert.vanvreckem@gmail.com>
+    # Predicate that returns exit status 0 if the database root password
+    # is set, a nonzero exit status otherwise.
+    is_mysql_root_password_set() {
+      mysqladmin --user=root status > /dev/null 2>&1
+      echo $?
+    }
+
     whoami      #=> vagrant
     echo $HOME  #=> /home/vagrant
     # install packages
@@ -30,6 +40,13 @@ Vagrant.configure("2") do |config|
     else
        echo "Already installed MySQL 5.7"
        sudo service mysqld restart
+    fi
+
+    if [ is_mysql_root_password_set -eq 0 ]; then
+       echo "MySQL is already set root password"
+    else
+       echo "Set root password for MySQL"
+       bash secure-mysql.sh #{settings['db']['mysql-root-password']}
     fi
 
     # prepare rbenv

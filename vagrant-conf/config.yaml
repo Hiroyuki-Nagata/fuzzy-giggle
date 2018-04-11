@@ -4,3 +4,5 @@ app:
   branch: "master"
   app-name: "fuzzy-giggle"
   conf-name: "fuzzy-giggle.conf"
+db:
+  mysql-root-password: "password"
