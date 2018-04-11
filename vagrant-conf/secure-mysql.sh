@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -x
 #
 # Author: Bert Van Vreckem <bert.vanvreckem@gmail.com>
 #
@@ -27,7 +27,8 @@ _EOF_
 # is set, a nonzero exit status otherwise.
 is_mysql_root_password_set() {
   mysqladmin --user=root status > /dev/null 2>&1
-  echo $?
+  echo ! $?
+  return
 }
 
 # Predicate that returns exit status 0 if the mysql(1) command is available,
@@ -35,6 +36,7 @@ is_mysql_root_password_set() {
 is_mysql_command_available() {
   which mysql > /dev/null 2>&1
   echo $?
+  return
 }
 
 #}}}
@@ -47,24 +49,27 @@ if [ "$#" -ne "1" ]; then
 fi
 
 #}}}
+
 #{{{ Variables
 db_root_password="${1}"
 #}}}
 
 # Script proper
 
-if [ is_mysql_command_available -eq 0 ]; then
+if [ is_mysql_command_available = "1" ]; then
   echo "The MySQL/MariaDB client mysql(1) is not installed."
   exit 1
 fi
 
-if [ is_mysql_root_password_set -eq 0 ]; then
+if [ is_mysql_root_password_set = "0" ]; then
   echo "Database root password already set"
   exit 0
 fi
 
-mysql --user=root <<_EOF_
-  UPDATE mysql.user SET Password=PASSWORD('${db_root_password}') WHERE User='root';
+db_root_tmp_password=`sudo cat /var/log/mysqld.log | grep "temporary password" | sed -e 's/.* \(.*\)$/\1/g'`
+
+mysql --user=root --connect-expired-password -p${db_root_tmp_password}<<_EOF_
+  ALTER USER 'root'@'localhost' IDENTIFIED BY '${db_root_password}';
   DELETE FROM mysql.user WHERE User='';
   DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
   DROP DATABASE IF EXISTS test;
