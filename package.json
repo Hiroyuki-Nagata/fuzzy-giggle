@@ -12,5 +12,9 @@
   },
   "scripts": {
     "postinstall": "cd ./apps/ds/vue-paper-dashboard && yarn && yarn run webpack --config build/webpack.dev.conf.js"
+  },
+  "engines": {
+    "node": ">= 4.0.0",
+    "npm": ">= 3.0.0"
   }
 }
