@@ -17,10 +17,10 @@ Vagrant.configure("2") do |config|
     # Author: Bert Van Vreckem <bert.vanvreckem@gmail.com>
     # Predicate that returns exit status 0 if the database root password
     # is set, a nonzero exit status otherwise.
-    function is_mysql_root_password_not_set() {
+    function is_mysql_root_password_set() {
       db_root_tmp_password=`sudo cat /var/log/mysqld.log | grep "temporary password" | sed -e 's/.* \(.*\)$/\1/g'`
-      mysql --user=root --connect-expired-password -p"${db_root_tmp_password}" -e "select 'true' from dual;"
-      echo $?
+      ret=$(mysql --user=root --connect-expired-password -p"${db_root_tmp_password}" -e "select 'true' from dual" 2>&1 1>/dev/null | grep 'ERROR 1820' | wc -l)
+      echo $ret
       return
     }
 
@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
        sudo service mysqld restart
     fi
 
-    if [ `is_mysql_root_password_not_set` = "1" ]; then
+    if [ `is_mysql_root_password_set` = "0" ]; then
        echo "MySQL is already set root password"
     else
        # FYI: http://www.luft.co.jp/cgi/randam.php

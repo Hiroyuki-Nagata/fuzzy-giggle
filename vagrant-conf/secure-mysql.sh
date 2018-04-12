@@ -25,10 +25,10 @@ _EOF_
 
 # Predicate that returns exit status 0 if the database root password
 # is set, a nonzero exit status otherwise.
-function is_mysql_root_password_not_set() {
+function is_mysql_root_password_set() {
   db_root_tmp_password=`sudo cat /var/log/mysqld.log | grep "temporary password" | sed -e 's/.* \(.*\)$/\1/g'`
-  mysql --user=root --connect-expired-password -p"${db_root_tmp_password}" -e "select 'true' from dual;"
-  echo $?
+  ret=$(mysql --user=root --connect-expired-password -p"${db_root_tmp_password}" -e "select 'true' from dual" 2>&1 1>/dev/null | grep 'ERROR 1820' | wc -l)
+  echo $ret
   return
 }
 
@@ -62,13 +62,12 @@ if [ `is_mysql_command_available` = "1" ]; then
   exit 1
 fi
 
-if [ `is_mysql_root_password_not_set` = "1" ]; then
+if [ `is_mysql_root_password_set` = "0" ]; then
   echo "Database root password already set"
   exit 0
 fi
 
 db_root_tmp_password=`sudo cat /var/log/mysqld.log | grep "temporary password" | sed -e 's/.* \(.*\)$/\1/g'`
-
 echo "Connect MySQL with: mysql --user=root --connect-expired-password -p${db_root_tmp_password}"
 
 mysql --user=root --connect-expired-password -p"${db_root_tmp_password}" <<_EOF_
