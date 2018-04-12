@@ -4,6 +4,11 @@ const SidebarStore = {
   showSidebar: false,
   sidebarLinks: [
     {
+      name: 'スプレッドシート',
+      icon: 'ti-layout-grid4',
+      path: '/admin/spreadsheet'
+    },
+    {
       name: 'データソース',
       icon: 'ti-server',
       path: '/admin/data-src'

@@ -11,6 +11,11 @@ import Maps from 'src/components/Dashboard/Views/Maps.vue'
 import Typography from 'src/components/Dashboard/Views/Typography.vue'
 import TableList from 'src/components/Dashboard/Views/TableList.vue'
 
+// TODO: Implements actual functions
+import Spreadsheet from 'src/components/Dashboard/Views/Spreadsheet.vue'
+import DataSrc from 'src/components/Dashboard/Views/DataSrc.vue'
+import TemplateJob from 'src/components/Dashboard/Views/TemplateJob.vue'
+
 const routes = [
   {
     path: '/',
@@ -22,6 +27,21 @@ const routes = [
     component: DashboardLayout,
     redirect: '/admin/stats',
     children: [
+      {
+        path: 'spreadsheet',
+        name: 'スプレッドシート',
+        component: Spreadsheet
+      },
+      {
+        path: 'data-src',
+        name: 'データソース',
+        component: DataSrc
+      },
+      {
+        path: 'template-job',
+        name: '定型ジョブ',
+        component: TemplateJob
+      },
       {
         path: 'overview',
         name: 'overview',
