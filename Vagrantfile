@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
     echo $HOME  #=> /home/vagrant
     # install packages
     sudo yum -y update
-    sudo yum -y install git openssl-devel readline-devel zlib-devel httpd
+    sudo yum -y install git openssl-devel readline-devel zlib-devel httpd mysql-devel
 
     # install mysql57
     sudo rpm -q mysql-community-server
