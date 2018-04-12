@@ -17,9 +17,10 @@ Vagrant.configure("2") do |config|
     # Author: Bert Van Vreckem <bert.vanvreckem@gmail.com>
     # Predicate that returns exit status 0 if the database root password
     # is set, a nonzero exit status otherwise.
-    is_mysql_root_password_set() {
-      mysqladmin --user=root status > /dev/null 2>&1
-      echo ! $?
+    function is_mysql_root_password_not_set() {
+      db_root_tmp_password=`sudo cat /var/log/mysqld.log | grep "temporary password" | sed -e 's/.* \(.*\)$/\1/g'`
+      mysql --user=root --connect-expired-password -p"${db_root_tmp_password}" -e "select 'true' from dual;"
+      echo $?
       return
     }
 
@@ -43,13 +44,18 @@ Vagrant.configure("2") do |config|
        sudo service mysqld restart
     fi
 
-    if [ is_mysql_root_password_set = "0" ]; then
+    if [ `is_mysql_root_password_not_set` = "1" ]; then
        echo "MySQL is already set root password"
     else
        # FYI: http://www.luft.co.jp/cgi/randam.php
        echo "Set root password for MySQL"
        bash secure-mysql.sh #{settings['db']['mysql-root-password']}
     fi
+
+    # Create DB
+    mysql --user=root -p"#{settings['db']['mysql-root-password']}" <<_EOF_
+       CREATE DATABASE IF NOT EXISTS fuzzy_giggle_development;
+_EOF_
 
     # prepare rbenv
     if hash rbenv 2>/dev/null; then
@@ -97,6 +103,7 @@ Vagrant.configure("2") do |config|
     # update settings['app']['app-name'] (hanami side)
     ruby --version
     cd $CLONE_TO && bundle install
+    cd $CLONE_TO && bundle exec rake dotenv:gen_dotenv "mysql://localhost/fuzzy_giggle_development"
 
     # prepare yarn
     if hash yarn 2>/dev/null; then

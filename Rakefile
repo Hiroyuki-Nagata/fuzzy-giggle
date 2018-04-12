@@ -14,7 +14,10 @@ task spec: :test
 
 namespace :dotenv do
   desc "ユーザ用のdotenvファイルを作成します"
-  task :gen_dotenv do
+  task :gen_dotenv, ['database_url'] do |task,args|
+    p args
+    database_url = args['database_url']
+    database_url ||= "sqlite://db/fuzzy_giggle_development.sqlite3"
     # secretキーを作成する
     # http://hanamirb.org/guides/command-line/generators/#secret
     secret = (`bundle exec hanami generate secret ds`).split("\n")[1]
@@ -22,7 +25,7 @@ namespace :dotenv do
     File.open(".env.development", "w") do |f|
       f.puts <<-EOS
 # Define ENV variables for development environment
-DATABASE_URL="sqlite://db/fuzzy_giggle_development.sqlite"
+DATABASE_URL="#{database_url}"
 SERVE_STATIC_ASSETS="true"
 #{secret}
       EOS
