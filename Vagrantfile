@@ -103,7 +103,7 @@ _EOF_
     # update settings['app']['app-name'] (hanami side)
     ruby --version
     cd $CLONE_TO && bundle install
-    cd $CLONE_TO && bundle exec rake dotenv:gen_dotenv "mysql://localhost/fuzzy_giggle_development"
+    cd $CLONE_TO && bundle exec rake dotenv:gen_dotenv['mysql2://localhost/fuzzy_giggle_development']
 
     # prepare yarn
     if hash yarn 2>/dev/null; then

@@ -15,7 +15,6 @@ task spec: :test
 namespace :dotenv do
   desc "ユーザ用のdotenvファイルを作成します"
   task :gen_dotenv, ['database_url'] do |task,args|
-    p args
     database_url = args['database_url']
     database_url ||= "sqlite://db/fuzzy_giggle_development.sqlite3"
     # secretキーを作成する
