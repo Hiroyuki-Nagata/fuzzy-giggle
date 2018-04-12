@@ -10,5 +10,5 @@
 
 # nodejs
 node_modules
-yarn.lock
+# yarn.lock (for Heroku)
 webpack-assets.json
