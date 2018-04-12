@@ -25,15 +25,16 @@ _EOF_
 
 # Predicate that returns exit status 0 if the database root password
 # is set, a nonzero exit status otherwise.
-is_mysql_root_password_set() {
-  mysqladmin --user=root status > /dev/null 2>&1
-  echo ! $?
+function is_mysql_root_password_not_set() {
+  db_root_tmp_password=`sudo cat /var/log/mysqld.log | grep "temporary password" | sed -e 's/.* \(.*\)$/\1/g'`
+  mysql --user=root --connect-expired-password -p"${db_root_tmp_password}" -e "select 'true' from dual;"
+  echo $?
   return
 }
 
 # Predicate that returns exit status 0 if the mysql(1) command is available,
 # nonzero exit status otherwise.
-is_mysql_command_available() {
+function is_mysql_command_available() {
   which mysql > /dev/null 2>&1
   echo $?
   return
@@ -56,12 +57,12 @@ db_root_password="${1}"
 
 # Script proper
 
-if [ is_mysql_command_available = "1" ]; then
+if [ `is_mysql_command_available` = "1" ]; then
   echo "The MySQL/MariaDB client mysql(1) is not installed."
   exit 1
 fi
 
-if [ is_mysql_root_password_set = "0" ]; then
+if [ `is_mysql_root_password_not_set` = "1" ]; then
   echo "Database root password already set"
   exit 0
 fi
