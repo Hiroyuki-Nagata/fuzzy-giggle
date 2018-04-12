@@ -19,7 +19,8 @@ Vagrant.configure("2") do |config|
     # is set, a nonzero exit status otherwise.
     is_mysql_root_password_set() {
       mysqladmin --user=root status > /dev/null 2>&1
-      echo $?
+      echo ! $?
+      return
     }
 
     whoami      #=> vagrant
@@ -42,9 +43,10 @@ Vagrant.configure("2") do |config|
        sudo service mysqld restart
     fi
 
-    if [ is_mysql_root_password_set -eq 0 ]; then
+    if [ is_mysql_root_password_set = "0" ]; then
        echo "MySQL is already set root password"
     else
+       # FYI: http://www.luft.co.jp/cgi/randam.php
        echo "Set root password for MySQL"
        bash secure-mysql.sh #{settings['db']['mysql-root-password']}
     fi

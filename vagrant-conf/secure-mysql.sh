@@ -68,11 +68,18 @@ fi
 
 db_root_tmp_password=`sudo cat /var/log/mysqld.log | grep "temporary password" | sed -e 's/.* \(.*\)$/\1/g'`
 
-mysql --user=root --connect-expired-password -p${db_root_tmp_password}<<_EOF_
-  ALTER USER 'root'@'localhost' IDENTIFIED BY '${db_root_password}';
+echo "Connect MySQL with: mysql --user=root --connect-expired-password -p${db_root_tmp_password}"
+
+mysql --user=root --connect-expired-password -p"${db_root_tmp_password}" <<_EOF_
+  SET PASSWORD FOR root@localhost=PASSWORD('${db_root_password}');
+_EOF_
+
+mysql --user=root -p"${db_root_password}" <<_EOF_
   DELETE FROM mysql.user WHERE User='';
   DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
   DROP DATABASE IF EXISTS test;
   DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
   FLUSH PRIVILEGES;
 _EOF_
+
+echo "Success ${?} ?"
