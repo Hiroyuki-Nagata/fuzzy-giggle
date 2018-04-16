@@ -22,11 +22,11 @@
       </div>
     </div>
 
-    <!-- div class="col-xs-12" -->
+    <div class="col-xs-12">
       <div id="hot-preview">
         <HotTable :settings="hotSettings"></HotTable>
       </div>
-    <!-- /div-->
+    </div>
 
     </div>
 
@@ -60,7 +60,7 @@
           }
         ],
         hotSettings: {
-          data: [['sample', 'data', 'this']],
+          data: [['サンプル', 'データ', 'だYO']],
           // Handsontable.helper.createSpreadsheetData(50, 50),
           colHeaders: true
         }
@@ -70,7 +70,6 @@
 
 </script>
 
-<!-- <style src="../node_modules/handsontable/dist/handsontable.full.css"></style> -->
-<style src="../../../../node_modules/handsontable/dist/handsontable.full.min.css"
+<style src="../../../../node_modules/handsontable/dist/handsontable.full.min.css"></style>
 <style>
 </style>
