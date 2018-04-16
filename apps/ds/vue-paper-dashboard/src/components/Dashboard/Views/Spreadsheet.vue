@@ -22,19 +22,11 @@
       </div>
     </div>
 
-    <div class="col-xs-12">
-      <!-- <chart-card :chart-data="usersChart.data" :chart-options="usersChart.options"> -->
-      <!--   <h4 class="title" slot="title">Users behavior</h4> -->
-      <!--   <span slot="subTitle"> 24 Hours performance</span> -->
-      <!--   <span slot="footer"> -->
-      <!--     <i class="ti-reload"></i> Updated 3 minutes ago</span> -->
-      <!--   <div slot="legend"> -->
-      <!--     <i class="fa fa-circle text-info"></i> Open -->
-      <!--     <i class="fa fa-circle text-danger"></i> Click -->
-      <!--     <i class="fa fa-circle text-warning"></i> Click Second Time -->
-      <!--   </div> -->
-      <!-- </chart-card> -->
-    </div>
+    <!-- div class="col-xs-12" -->
+      <div id="hot-preview">
+        <HotTable :settings="hotSettings"></HotTable>
+      </div>
+    <!-- /div-->
 
     </div>
 
@@ -43,10 +35,14 @@
 <script>
   import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
   import ChartCard from 'components/UIComponents/Cards/ChartCard.vue'
+  import Handsontable from '../../../../node_modules/handsontable/dist/handsontable.min.js'
+  import HotTable from '@handsontable/vue/vue-handsontable-ce.min.js'
+
   export default {
     components: {
       StatsCard,
-      ChartCard
+      ChartCard,
+      HotTable
     },
     /**
      * Chart data used to render stats, charts. Should be replaced with server data
@@ -62,12 +58,19 @@
             footerText: 'ここにファイルをドロップ',
             footerIcon: 'ti-upload'
           }
-        ]
+        ],
+        hotSettings: {
+          data: [['sample', 'data', 'this']],
+          // Handsontable.helper.createSpreadsheetData(50, 50),
+          colHeaders: true
+        }
       }
     }
   }
 
 </script>
-<style>
 
+<!-- <style src="../node_modules/handsontable/dist/handsontable.full.css"></style> -->
+<style src="../../../../node_modules/handsontable/dist/handsontable.full.min.css"
+<style>
 </style>
