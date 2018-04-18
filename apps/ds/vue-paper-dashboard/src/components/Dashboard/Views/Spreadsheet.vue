@@ -9,7 +9,7 @@
       <div id="drop"
            draggable="true"
            @drop="handleDrop($event)"
-           @dragover="handleDragOver($event)"
+           @dragover="handleDragover($event)"
            @dragenter="handleDragover($event)"
            class="col-lg-3 col-sm-6" v-for="stats in statsCards">
         <stats-card>
@@ -49,40 +49,6 @@ export default {
     ChartCard,
     HotTable
   },
-  /** HELPERS **/
-  get_header_row: function (sheet) {
-    var headers = []
-    var range = XLSX.utils.decode_range(sheet['!ref'])
-    var C = range.s.r /* start in the first row */
-    var R = range.s.r /* start in the first row */
-    for (C = range.s.c; C <= range.e.c; ++C) { /* walk every column in the range */
-      var cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })] /* find the cell in the first row */
-      var hdr = 'UNKNOWN ' + C // <-- replace with your desired default
-      if (cell && cell.t) hdr = XLSX.utils.format_cell(cell)
-      headers.push(hdr)
-    }
-    return headers
-  },
-  fixdata: function (data) {
-    var o = ''
-    var l = 0
-    var w = 10240
-    for (; l < data.byteLength / w; ++l) {
-      o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)))
-    }
-    o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)))
-    return o
-  },
-  workbook_to_json: function (workbook) {
-    var result = {}
-    workbook.SheetNames.forEach(function (sheetName) {
-      var roa = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName])
-      if (roa.length > 0) {
-        result[sheetName] = roa
-      }
-    })
-    return result
-  },
   /**
    * Chart data used to render stats, charts. Should be replaced with server data
    */
@@ -100,16 +66,49 @@ export default {
       ],
       hotSettings: {
         data: [['サンプル', 'データ', 'だYO']],
-        // Handsontable.helper.createSpreadsheetData(50, 50),
         colHeaders: true
-      },
-      state: {
-        tickets: [{name: 'test'}],
-        headers: ['Test Header']
-      }
+      } // ,
+      // state: {
+      //   tickets: [{name: 'test'}],
+      //   headers: ['Test Header']
+      // }
     }
   },
   methods: {
+    /** HELPERS **/
+    getHeaderRow: function (sheet) {
+      var headers = []
+      var range = XLSX.utils.decode_range(sheet['!ref'])
+      var C = range.s.r /* start in the first row */
+      var R = range.s.r /* start in the first row */
+      for (C = range.s.c; C <= range.e.c; ++C) { /* walk every column in the range */
+        var cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })] /* find the cell in the first row */
+        var hdr = 'UNKNOWN ' + C // <-- replace with your desired default
+        if (cell && cell.t) hdr = XLSX.utils.format_cell(cell)
+        headers.push(hdr)
+      }
+      return headers
+    },
+    fixdata: function (data) {
+      var o = ''
+      var l = 0
+      var w = 10240
+      for (; l < data.byteLength / w; ++l) {
+        o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)))
+      }
+      o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)))
+      return o
+    },
+    workbook_to_json: function (workbook) {
+      var result = {}
+      workbook.SheetNames.forEach(function (sheetName) {
+        var roa = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName])
+        if (roa.length > 0) {
+          result[sheetName] = roa
+        }
+      })
+      return result
+    },
     /** PARSING and DRAGDROP **/
     handleDrop: function (e) {
       e.stopPropagation()
@@ -120,17 +119,23 @@ export default {
       var f
       for (i = 0, f = files[i]; i !== files.length; ++i) {
         var reader = new FileReader()
-        // var name = f.name
-        reader.onload = function (e) {
-          var data = e.target.result
-          var fixedData = this.fixdata(data)
-          var workbook = XLSX.read(btoa(fixedData), {type: 'base64'})
-          var firstSheetName = workbook.SheetNames[0]
-          var worksheet = workbook.Sheets[firstSheetName]
-          this.state.headers = this.get_header_row(worksheet)
-          var results = XLSX.utils.sheet_to_json(worksheet)
-          this.state.tickets = results
-        }
+        // function will be called after loaded the file
+        reader.onload = (function (file, parent) {
+          console.log('Excel book: ' + file.name)
+          return function (e) {
+            var data = e.target.result
+            var fixedData = parent.fixdata(data)
+            var workbook = XLSX.read(btoa(fixedData), {type: 'base64'})
+            var firstSheetName = workbook.SheetNames[0]
+            var worksheet = workbook.Sheets[firstSheetName]
+            console.log('Sheet: ' + firstSheetName)
+            // https://github.com/SheetJS/js-xlsx/issues/574
+            var mat = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 })
+            console.log(mat)
+            parent.hotSettings.data = mat
+          }
+        })(f, this)
+        // load file
         reader.readAsArrayBuffer(f)
       }
     },
