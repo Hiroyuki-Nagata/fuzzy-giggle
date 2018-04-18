@@ -61,15 +61,23 @@ export default {
           title: 'ファイルを選択',
           value: '',
           footerText: 'ここにファイルをドロップ',
-          footerIcon: 'ti-upload'
+          footerIcon: 'ti-help-alt'
         },
         {
           type: 'info',
-          icon: 'ti-server',
+          icon: 'ti-export',
           title: 'エクスポートする',
           value: '',
           footerText: '全体 or 選択範囲をエクスポートする',
-          footerIcon: ''
+          footerIcon: 'ti-help-alt'
+        },
+        {
+          type: 'info',
+          icon: 'ti-stats-up',
+          title: 'サマリ',
+          value: '',
+          footerText: 'ファイル:',
+          footerIcon: 'ti-comment'
         }
       ],
       hotSettings: {
@@ -129,6 +137,7 @@ export default {
         // function will be called after loaded the file
         reader.onload = (function (file, parent) {
           console.log('Excel book: ' + file.name)
+          parent.statsCards[2].footerText = 'ファイル: ' + file.name
           return function (e) {
             var data = e.target.result
             var fixedData = parent.fixdata(data)
@@ -138,6 +147,7 @@ export default {
             console.log('Sheet: ' + firstSheetName)
             // https://github.com/SheetJS/js-xlsx/issues/574
             var mat = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 })
+            parent.statsCards[2].value = mat.length + '行'
             parent.hotSettings.data = mat
           }
         })(f, this)
