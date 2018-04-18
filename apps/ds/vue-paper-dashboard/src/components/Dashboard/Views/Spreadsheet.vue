@@ -31,22 +31,12 @@
 
       <!-- spreadsheet book -->
       <vue-tabs>
-        <v-tab title="First tab">
-          First tab content
-        </v-tab>
-
-        <v-tab title="Second tab">
-          Second tab content
-        </v-tab>
-
-        <v-tab title="Third tab">
-          Third tab content
+        <v-tab v-bind:title="tab" v-for="(tab,index) in tabs">
+          <div>
+            <hot-table v-bind:settings="hotSheets[index]"/>
+          </div>
         </v-tab>
       </vue-tabs>
-
-      <div id="hot-preview">
-        <HotTable :settings="hotSettings"></HotTable>
-      </div>
     </div>
 
     </div>
@@ -88,13 +78,15 @@ export default {
           footerIcon: 'ti-comment'
         }
       ],
-      hotSettings: {
-        data: null,
-        rowHeaders: true,
-        colHeaders: true,
-        contextMenu: true,
-        readOnly: true
-      }
+      tabs: [],
+      hotSheets: []
+      //   {
+      //   data: null,
+      //   rowHeaders: true,
+      //   colHeaders: true,
+      //   contextMenu: true,
+      //   readOnly: true
+      // }
     }
   },
   methods: {
@@ -148,13 +140,17 @@ export default {
             var data = e.target.result
             var fixedData = parent.fixdata(data)
             var workbook = XLSX.read(btoa(fixedData), {type: 'base64'})
-            var firstSheetName = workbook.SheetNames[0]
-            // var worksheet = workbook.Sheets[firstSheetName]
-            console.log('Sheet: ' + firstSheetName)
-            // https://github.com/SheetJS/js-xlsx/issues/574
-            var mat = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 })
-            parent.statsCards[1].value = mat.length + '行'
-            parent.hotSettings.data = mat
+
+            // Set tab names
+            parent.tabs = workbook.SheetNames
+            // Set cells
+            workbook.SheetNames.forEach(
+              (name, idx) => {
+                var mat = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1 })
+                console.log('Sheet: ' + name + ', ' + mat.length + '行')
+                parent.hotSheets.push({data: mat, readOnly: true, rowHeaders: true, colHeaders: true})
+              }
+            )
           }
         })(f, this)
         // load file
