@@ -27,6 +27,23 @@
          @drop="handleDrop($event)"
          @dragover="handleDragover($event)"
          @dragenter="handleDragover($event)" class="col-xs-12">
+      <p>ここにExcelをドラッグ＆ドロップ</p>
+
+      <!-- spreadsheet book -->
+      <vue-tabs>
+        <v-tab title="First tab">
+          First tab content
+        </v-tab>
+
+        <v-tab title="Second tab">
+          Second tab content
+        </v-tab>
+
+        <v-tab title="Third tab">
+          Third tab content
+        </v-tab>
+      </vue-tabs>
+
       <div id="hot-preview">
         <HotTable :settings="hotSettings"></HotTable>
       </div>
@@ -121,9 +138,7 @@ export default {
       e.preventDefault()
       console.log('DROPPED')
       var files = e.dataTransfer.files
-      var i
-      var f
-      for (i = 0, f = files[i]; i !== files.length; ++i) {
+      for (var i = 0, f = files[i]; i !== files.length; ++i) {
         var reader = new FileReader()
         // function will be called after loaded the file
         reader.onload = (function (file, parent) {
