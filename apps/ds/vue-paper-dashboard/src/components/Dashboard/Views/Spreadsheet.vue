@@ -131,7 +131,6 @@ export default {
             console.log('Sheet: ' + firstSheetName)
             // https://github.com/SheetJS/js-xlsx/issues/574
             var mat = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 })
-            console.log(mat)
             parent.hotSettings.data = mat
           }
         })(f, this)
