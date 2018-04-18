@@ -62,16 +62,23 @@ export default {
           value: '',
           footerText: 'ここにファイルをドロップ',
           footerIcon: 'ti-upload'
+        },
+        {
+          type: 'info',
+          icon: 'ti-server',
+          title: 'エクスポートする',
+          value: '',
+          footerText: '全体 or 選択範囲をエクスポートする',
+          footerIcon: ''
         }
       ],
       hotSettings: {
         data: [['サンプル', 'データ', 'だYO']],
-        colHeaders: true
-      } // ,
-      // state: {
-      //   tickets: [{name: 'test'}],
-      //   headers: ['Test Header']
-      // }
+        rowHeaders: true,
+        colHeaders: true,
+        contextMenu: true,
+        readOnly: true
+      }
     }
   },
   methods: {
@@ -127,7 +134,7 @@ export default {
             var fixedData = parent.fixdata(data)
             var workbook = XLSX.read(btoa(fixedData), {type: 'base64'})
             var firstSheetName = workbook.SheetNames[0]
-            var worksheet = workbook.Sheets[firstSheetName]
+            // var worksheet = workbook.Sheets[firstSheetName]
             console.log('Sheet: ' + firstSheetName)
             // https://github.com/SheetJS/js-xlsx/issues/574
             var mat = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 })
