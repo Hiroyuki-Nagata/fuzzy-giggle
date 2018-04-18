@@ -6,12 +6,7 @@
 
     <!--Stats cards-->
     <div class="row">
-      <div id="drop"
-           draggable="true"
-           @drop="handleDrop($event)"
-           @dragover="handleDragover($event)"
-           @dragenter="handleDragover($event)"
-           class="col-lg-3 col-sm-6" v-for="stats in statsCards">
+      <div class="col-lg-3 col-sm-6" v-for="stats in statsCards">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-${stats.type}`" slot="header">
             <i :class="stats.icon"></i>
@@ -27,7 +22,11 @@
       </div>
     </div>
 
-    <div class="col-xs-12">
+    <div id="drop"
+         draggable="true"
+         @drop="handleDrop($event)"
+         @dragover="handleDragover($event)"
+         @dragenter="handleDragover($event)" class="col-xs-12">
       <div id="hot-preview">
         <HotTable :settings="hotSettings"></HotTable>
       </div>
@@ -57,14 +56,6 @@ export default {
       statsCards: [
         {
           type: 'info',
-          icon: 'ti-layout-grid4-alt',
-          title: 'ファイルを選択',
-          value: '',
-          footerText: 'ここにファイルをドロップ',
-          footerIcon: 'ti-help-alt'
-        },
-        {
-          type: 'info',
           icon: 'ti-export',
           title: 'エクスポートする',
           value: '',
@@ -81,7 +72,7 @@ export default {
         }
       ],
       hotSettings: {
-        data: [['サンプル', 'データ', 'だYO']],
+        data: null,
         rowHeaders: true,
         colHeaders: true,
         contextMenu: true,
@@ -137,7 +128,7 @@ export default {
         // function will be called after loaded the file
         reader.onload = (function (file, parent) {
           console.log('Excel book: ' + file.name)
-          parent.statsCards[2].footerText = 'ファイル: ' + file.name
+          parent.statsCards[1].footerText = 'ファイル: ' + file.name
           return function (e) {
             var data = e.target.result
             var fixedData = parent.fixdata(data)
@@ -147,7 +138,7 @@ export default {
             console.log('Sheet: ' + firstSheetName)
             // https://github.com/SheetJS/js-xlsx/issues/574
             var mat = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 })
-            parent.statsCards[2].value = mat.length + '行'
+            parent.statsCards[1].value = mat.length + '行'
             parent.hotSettings.data = mat
           }
         })(f, this)
@@ -167,4 +158,14 @@ export default {
 
 <style src="../../../../node_modules/handsontable/dist/handsontable.full.min.css"></style>
 <style>
+  #drop{
+  border: 2px dashed #bbb;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      padding: 25px;
+      text-align: center;
+      // font: 20pt bold,"Vollkorn";
+      // color: #bbb;
+  }
 </style>
