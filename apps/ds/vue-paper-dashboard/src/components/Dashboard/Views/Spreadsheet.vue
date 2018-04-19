@@ -1,10 +1,6 @@
 <template>
   <div>
-
-    <!--Charts-->
-    <div class="row">
-
-    <!--Stats cards-->
+    <!-- Stats cards-->
     <div class="row">
       <div class="col-lg-6 col-sm-12" v-for="stats in statsCards">
         <stats-card>
@@ -31,8 +27,8 @@
 
       <!-- spreadsheet book -->
       <vue-tabs @tab-change="handleTabChange">
-        <v-tab v-bind:title="tab" v-for="(tab,index) in tabs">
-          <div>
+        <v-tab v-bind:title="tab" ref="tabsRef" v-for="(tab,index) in tabs">
+          <div class="pre-scrollable">
             <hot-table v-bind:settings="hotSheets[index]"/>
           </div>
         </v-tab>
@@ -170,6 +166,8 @@ export default {
     },
     handleTabChange: function (tabIndex, newTab, oldTab) {
       this.statsCards[0].value = this.hotSheets[tabIndex].data.length + '行, ' + this.hotSheets[tabIndex].data[0].length + '列'
+      // console.log(this.$refs.tabsRef[tabIndex].$el)
+      // this.$refs.tabsRef[tabIndex].$el.focus()
     }
   }
 }
