@@ -6,7 +6,7 @@
 
     <!--Stats cards-->
     <div class="row">
-      <div class="col-lg-3 col-sm-6" v-for="stats in statsCards">
+      <div class="col-lg-6 col-sm-12" v-for="stats in statsCards">
         <stats-card>
           <div class="icon-big text-center" :class="`icon-${stats.type}`" slot="header">
             <i :class="stats.icon"></i>
@@ -63,30 +63,23 @@ export default {
       statsCards: [
         {
           type: 'info',
-          icon: 'ti-export',
-          title: 'エクスポートする',
-          value: '',
-          footerText: '全体 or 選択範囲をエクスポートする',
-          footerIcon: 'ti-help-alt'
-        },
-        {
-          type: 'info',
           icon: 'ti-stats-up',
           title: 'サマリ',
           value: '',
           footerText: 'ファイル:',
           footerIcon: 'ti-comment'
+        },
+        {
+          type: 'info',
+          icon: 'ti-export',
+          title: 'エクスポートする',
+          value: '',
+          footerText: '全体 or 選択範囲をエクスポートする',
+          footerIcon: 'ti-help-alt'
         }
       ],
       tabs: [],
       hotSheets: []
-      //   {
-      //   data: null,
-      //   rowHeaders: true,
-      //   colHeaders: true,
-      //   contextMenu: true,
-      //   readOnly: true
-      // }
     }
   },
   methods: {
@@ -135,7 +128,7 @@ export default {
         // function will be called after loaded the file
         reader.onload = (function (file, parent) {
           console.log('Excel book: ' + file.name)
-          parent.statsCards[1].footerText = 'ファイル: ' + file.name
+          parent.statsCards[0].footerText = 'ファイル: ' + file.name
           return function (e) {
             var data = e.target.result
             var fixedData = parent.fixdata(data)
@@ -146,9 +139,22 @@ export default {
             // Set cells
             workbook.SheetNames.forEach(
               (name, idx) => {
-                var mat = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1 })
-                console.log('Sheet: ' + name + ', ' + mat.length + '行')
-                parent.hotSheets.push({data: mat, readOnly: true, rowHeaders: true, colHeaders: true})
+                var mat = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1, raw: true })
+                var col = Math.max.apply(null, mat.map((row) => { return row.length }))
+                console.log('Sheet: ' + name + ', ' + mat.length + '行, ' + col + '列')
+                // Padding each row doesn't have max size (col) with 'empty'
+                var paddingMatrix = mat.map((row) => {
+                  var rowLength = row.length
+                  if (row.length < col) {
+                    return row.concat(new Array(col - rowLength))
+                  } else {
+                    return row
+                  }
+                })
+                parent.statsCards[0].value = mat.length + '行, ' + col + '列'
+                parent.hotSheets.push(
+                    {data: paddingMatrix, readOnly: true, rowHeaders: true, colHeaders: true, contextMenu: true}
+                )
               }
             )
           }
