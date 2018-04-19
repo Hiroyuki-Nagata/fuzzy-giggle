@@ -30,7 +30,7 @@
       <p>ここにExcelをドラッグ＆ドロップ</p>
 
       <!-- spreadsheet book -->
-      <vue-tabs>
+      <vue-tabs @tab-change="handleTabChange">
         <v-tab v-bind:title="tab" v-for="(tab,index) in tabs">
           <div>
             <hot-table v-bind:settings="hotSheets[index]"/>
@@ -167,6 +167,9 @@ export default {
       e.stopPropagation()
       e.preventDefault()
       e.dataTransfer.dropEffect = 'copy'
+    },
+    handleTabChange: function (tabIndex, newTab, oldTab) {
+      this.statsCards[0].value = this.hotSheets[tabIndex].data.length + '行, ' + this.hotSheets[tabIndex].data[0].length + '列'
     }
   }
 }

@@ -17,6 +17,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './assets/sass/paper-dashboard.scss'
 import 'es6-promise/auto'
 import VueTabs from '../node_modules/vue-nav-tabs/dist/vue-tabs'
+import '../node_modules/vue-nav-tabs/themes/vue-tabs.css'
 
 // plugin setup
 Vue.use(VueRouter)
