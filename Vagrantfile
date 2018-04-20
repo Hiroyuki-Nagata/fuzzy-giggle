@@ -1,3 +1,6 @@
+#
+# Please run "vagrant plugin install vagrant-vbguest" before `vagrant up`
+#
 Vagrant.configure("2") do |config|
   config.vm.box = "mvbcoding/awslinux"
   config.vm.box_version = "2017.03.0.20170401"
@@ -11,6 +14,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: settings['app']['conf-name'], destination: "/home/vagrant/#{settings['app']['conf-name']}"
   # MySQL automation
   config.vm.provision "file", source: "vagrant-conf/secure-mysql.sh", destination: "/home/vagrant/secure-mysql.sh"
+
+  puts "mount Host '.' as Guest '/home/vagrant/fuzzy-giggle'..."
+  config.vm.synced_folder ".", "/home/vagrant/fuzzy-giggle", owner: "vagrant", group: "vagrant"
+
   # deploy codes
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
 
@@ -27,16 +34,20 @@ Vagrant.configure("2") do |config|
     whoami      #=> vagrant
     echo $HOME  #=> /home/vagrant
     # install packages
+
+    echo "Yum update..."
     sudo yum -y update
-    sudo yum -y install git openssl-devel readline-devel zlib-devel httpd mysql-devel
+    echo "Yum install git openssl-devel readline-devel zlib-devel httpd"
+    sudo yum -y install git openssl-devel readline-devel zlib-devel httpd
 
     # install mysql57
     sudo rpm -q mysql-community-server
 
     if [ $? -eq 1 ]; then
        echo "Install MySQL 5.7 !"
-       sudo yum install -y http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
-       sudo yum install -y mysql-community-server
+       sudo yum -y install http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+       sudo yum -y update
+       sudo yum -y install mysql-community-devel mysql-community-server
        sudo service mysqld start
        sudo chkconfig mysqld on
     else
@@ -86,19 +97,19 @@ _EOF_
     REPO_URL=#{settings['app']['git-url']}
     BRANCH=#{settings['app']['branch']}
 
-    if [ -d "$CLONE_TO" ]; then
-      cd $CLONE_TO
-      git fetch -p
-      git checkout -q $BRANCH
-      latest_rev=$(git ls-remote origin HEAD | awk '{print $1}')
-      current_rev=$(git rev-parse HEAD)
-      if [ "$latest_rev" != "$current_rev" ]; then
-        git reset --hard $(git log --pretty=format:%H | tail -1)
-        git pull
-      fi
-    else
-      git clone $REPO_URL $CLONE_TO
-    fi
+    # if [ -d "$CLONE_TO" ]; then
+    #   cd $CLONE_TO
+    #   git fetch -p
+    #   git checkout -q $BRANCH
+    #   latest_rev=$(git ls-remote origin HEAD | awk '{print $1}')
+    #   current_rev=$(git rev-parse HEAD)
+    #   if [ "$latest_rev" != "$current_rev" ]; then
+    #     git reset --hard $(git log --pretty=format:%H | tail -1)
+    #     git pull
+    #   fi
+    # else
+    #   git clone $REPO_URL $CLONE_TO
+    # fi
 
     # update settings['app']['app-name'] (hanami side)
     ruby --version
